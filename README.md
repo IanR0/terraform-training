@@ -1,2 +1,2 @@
 # terraform-training
-Sandbox repository for Terraform
+Sandbox repository for Terraform.
