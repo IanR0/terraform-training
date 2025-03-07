@@ -1,41 +1,18 @@
-provider "aws" {
-  profile = "default"
-  region  = "us-west-2"
+# Reference the global provider
+provider "azurerm" {
+  features {}
 }
 
-resource "aws_s3_bucket" "prod_tf_course" {
-  bucket = "tf-course-20191118"
-  acl    = "acl"
+# Call the AKS module
+module "aks" {
+  source              = "../../modules/aks"
+  resource_group_name = var.resource_group_name
+  cluster_name        = var.cluster_name
+  location            = var.location
+  node_count          = var.node_count
+  vm_size             = var.vm_size
+  enable_auto_scaling = var.enable_auto_scaling
+  min_count           = var.min_count
+  max_count           = var.max_count
+  tags                = var.tags
 }
-
-resource "aws_default_vpc" "default" {}
-
-resource "aws_security_group" "prod_web" {
-  name        = "prod_web"
-  description = "Allow standard http and https ports inbound and everything outbound"
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    "Terraform" : "true"
-  }
-}
-
-
